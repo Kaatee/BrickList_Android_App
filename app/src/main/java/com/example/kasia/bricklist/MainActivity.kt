@@ -11,8 +11,15 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+
         newProjectButton.setOnClickListener(){
             startActivityNewProject()
+        }
+
+        //tymczasowo podpieta lista z adaptera
+        archiveButton.setOnClickListener(){
+            val intent = Intent(this, LegoSetActivity::class.java )
+            startActivity(intent)
         }
     }
 
