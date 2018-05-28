@@ -56,7 +56,6 @@ class MyCustomAdapter(private var activity: Activity, private var items: ArrayLi
         //viewHolder.available?.text
 
         viewHolder.plusButton?.setOnClickListener{
-            Toast.makeText(context, "Dodaje", Toast.LENGTH_LONG).show()
             var av = viewHolder.available?.text.toString().toInt()
             val need = viewHolder.needed?.text.toString().toInt()
             if( av < need){
@@ -67,28 +66,23 @@ class MyCustomAdapter(private var activity: Activity, private var items: ArrayLi
                 }
             }
             else{
-                //Toast.makeText(view, "cos za duzo tego", Toast.LENGTH_LONG).show();
-                System.out.println("Cos za duzo")
+                Toast.makeText(context, "Masz juz tyle klockow, ile potrzebujesz", Toast.LENGTH_LONG).show()
             }
 
         }
 
         viewHolder.minusButton?.setOnClickListener{
-            Toast.makeText(context, "Odejmuje", Toast.LENGTH_LONG).show()
             var av = viewHolder.available?.text.toString().toInt()
             val need = viewHolder.needed?.text.toString().toInt()
-            if( av <= need ){
-                if(av>0) {
-                    av = av - 1
-                    viewHolder.available?.text = av.toString()
-                    if (av != need) {
-                        viewHolder.layout?.setBackgroundColor(TRANSPARENT)
-                    }
+            if(av>0) {
+                av = av - 1
+                viewHolder.available?.text = av.toString()
+                if (av != need) {
+                    viewHolder.layout?.setBackgroundColor(TRANSPARENT)
                 }
             }
-            else{
-                //Toast.makeText(view, "cos za duzo tego", Toast.LENGTH_LONG).show();
-                System.out.println("Cos za duzo")
+            else {
+                Toast.makeText(context, "Nie mozesz miec mniej niz 0 klockow", Toast.LENGTH_LONG).show()
             }
 
         }
