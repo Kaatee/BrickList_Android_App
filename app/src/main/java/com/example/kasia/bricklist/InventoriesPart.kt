@@ -19,6 +19,7 @@ class InventoriesPart {
     var quantityInSet:Int? = null
     var quantityInStore:Int = 0
     var colorID:Int? = null
+    var name:String? = null
 
     fun print(brick: InventoriesPart){
         var str = "------ itemType: "+brick.itemType + "itemID: " +  brick.itemId+ "gty: " + brick.qty?.toString() + "color: "+ brick.color+"extra: " +

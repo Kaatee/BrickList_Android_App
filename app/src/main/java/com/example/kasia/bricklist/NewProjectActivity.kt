@@ -117,10 +117,11 @@ class NewProjectActivity : AppCompatActivity() {
                         if(brick.alternate.equals("N") ){ //nie dodajemy alternate o innej wart niz  N
                             brick.typeID = database.getTypeID(brick)
                             brick.quantityInStore = 0
-                            brick.quantityInSet = database.getQuantityInSet(brick)
+                            brick.quantityInSet = brick.qty
                             brick.colorID = database.getColorID(brick)
                             brick.id = database.generateID()
                             brick.inventoryID =inventoryID
+                            brick.alternate = "N"
                         }
                     }
                     Log.i("---Jestem TU6","---Jestem TU6")

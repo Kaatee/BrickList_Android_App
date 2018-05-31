@@ -11,7 +11,7 @@ import android.widget.*
 /**
  * Created by Kasia on 26.05.2018.
  */
-class MyCustomAdapter(private var activity: Activity, private var items: ArrayList<String>, private var context: Context) : BaseAdapter(){
+class MyCustomAdapter(private var activity: Activity, private var items: ArrayList<InventoriesPart>, private var context: Context) : BaseAdapter(){
 
     private class ViewHolder(row: View?){
 
@@ -51,8 +51,10 @@ class MyCustomAdapter(private var activity: Activity, private var items: ArrayLi
             viewHolder = view.tag as ViewHolder
         }
 
-        var userDto = items[position]
-        viewHolder.txtName?.text = userDto
+        var x = items[position]
+        viewHolder.txtName?.text = x.itemId
+        viewHolder.available?.text = x.quantityInStore.toString()
+        viewHolder.needed?.text = x.quantityInSet.toString()
         //viewHolder.available?.text
 
         viewHolder.plusButton?.setOnClickListener{

@@ -153,7 +153,7 @@ class DataBaseHelper
         db.close()
         return quantityInSet
     }
-
+/*
     fun getQuantityInStore(x: InventoriesPart):Int{
         val query = "SELECT quantityInStore FROM InventoriesParts WHERE id = '" +x.id +"'"
         val db = this.writableDatabase
@@ -167,7 +167,7 @@ class DataBaseHelper
         db.close()
         return quantityInStore
     }
-
+*/
     fun getColorID(x: InventoriesPart):Int{
         val query = "SELECT id FROM Colors WHERE Code = '" +x.color +"'"
         val db = this.writableDatabase
@@ -205,6 +205,8 @@ class DataBaseHelper
         values.put("ColorID",brick.colorID)
         values.put("ItemID",brick.itemId)
         values.put("InventoryID",brick.inventoryID)
+        values.put("Id",brick.id)
+        values.put("Extra",brick.extra)
 
         val db = this.writableDatabase
         db.insert("InventoriesParts", null, values)
@@ -217,6 +219,7 @@ class DataBaseHelper
         values.put("Name",inventory.name)
         values.put("Active",inventory.active)
         values.put("LastAccessed", inventory.lastAccessed)
+
 
         val db = this.writableDatabase
         db.insert("Inventories",null,values)
@@ -251,7 +254,127 @@ class DataBaseHelper
         cursor.close()
         db.close()
         return inventories
+    }
 
+    fun getItemType(typeID: Int): String{
+        var itemType: String =""
+        val query = "Select Code FROM ItemTypes WHERE id = "+ typeID
+        val db = this.writableDatabase
+        val cursor = db.rawQuery(query, null)
+
+        if(cursor.moveToFirst()){
+            itemType = cursor.getString(0)
+        }
+        cursor.close()
+        db.close()
+        return itemType
+    }
+
+    fun getColor(colorID: Int): Int{
+        var color: Int =0
+        val query = "Select Code FROM Colors WHERE id = "+ colorID
+        val db = this.writableDatabase
+        val cursor = db.rawQuery(query, null)
+
+        if(cursor.moveToFirst()){
+            color = Integer.parseInt(cursor.getString(0))
+        }
+        cursor.close()
+        db.close()
+        return color
+    }
+
+    fun getName(partID: String): String{
+        var name: String =""
+        val query = "Select Name FROM Parts WHERE code = '"+ partID+"'"
+        Log.i("---", "Tu jestem cccc")
+        val db = this.writableDatabase
+        val cursor = db.rawQuery(query, null)
+        if(cursor.moveToFirst()){
+            name = cursor.getString(0)
+        }
+        cursor.close()
+        db.close()
+        return name
+    }
+
+    fun getInventoryID(inventoryName: String):String{
+        Log.i("---", "Tu jestem aa")
+        var name: String =""
+        Log.i("---", "Tu jestem bb")
+        val query = "Select id FROM Inventories WHERE Name = '"+ inventoryName+"'"
+        Log.i("---", "Tu jestem cc")
+        val db = this.writableDatabase
+        val cursor = db.rawQuery(query, null)
+        Log.i("---", "Tu jestem dd")
+        if(cursor.moveToFirst()){
+            name = cursor.getString(0)
+        }
+        cursor.close()
+        db.close()
+        Log.i("---", "Tu jestem ee: "+ name)
+        return name
+    }
+
+    fun getInventoriesParts(inxentoryName: String):ArrayList<InventoriesPart>{
+        val inventoriesParts : ArrayList<InventoriesPart> = java.util.ArrayList()
+
+        val query = "SELECT * FROM InventoriesParts WHERE InventoryID = " + getInventoryID(inxentoryName)
+
+        val db = this.writableDatabase
+        val cursor = db.rawQuery(query, null)
+        var inventoryPart =InventoriesPart()
+
+        if(cursor.moveToFirst()){
+            inventoryPart.id = Integer.parseInt(cursor.getString(0))
+            inventoryPart.inventoryID = Integer.parseInt(cursor.getString(1))
+            inventoryPart.typeID = Integer.parseInt(cursor.getString(2))
+            inventoryPart.itemId = cursor.getString(3)
+            inventoryPart.quantityInSet = Integer.parseInt(cursor.getString(4))
+            inventoryPart.quantityInStore = Integer.parseInt(cursor.getString(5))
+            Log.i("---", "Tu jestem m")
+            ////try {
+               //// inventoryPart.colorID = Integer.parseInt(cursor.getString(6))
+            ////} catch(e:Exception){Log.i("---", "Blad przed: "+e.message.toString())}
+
+            Log.i("---", "Tu jestem n")
+            inventoryPart.extra = cursor.getString(7)
+            Log.i("---", "Tu jestem o")
+            inventoryPart.itemType = getItemType(inventoryPart.typeID!!)
+            Log.i("---", "Tu jestem p")
+            inventoryPart.qty =inventoryPart.quantityInSet
+            Log.i("---", "Tu jestem r")
+            /////inventoryPart.color =getColor(inventoryPart.colorID!!)
+            Log.i("---", "Tu jestem s")
+
+            inventoryPart.name = getName(inventoryPart.itemId!!)
+            Log.i("---", "Tu jestem t")
+
+            inventoriesParts.add(inventoryPart)
+        }
+        while(cursor.moveToNext()){
+            Log.i("---", "Tu jestem u")
+            var inventoryPart =InventoriesPart()
+            inventoryPart.id = Integer.parseInt(cursor.getString(0))
+            inventoryPart.inventoryID = Integer.parseInt(cursor.getString(1))
+            inventoryPart.typeID = Integer.parseInt(cursor.getString(2))
+            inventoryPart.itemId = cursor.getString(3)
+            inventoryPart.quantityInSet = Integer.parseInt(cursor.getString(4))
+            inventoryPart.quantityInStore = Integer.parseInt(cursor.getString(5))
+            Log.i("---", "InSet: "+inventoryPart.quantityInSet + " InStore: "+ inventoryPart.quantityInStore)
+            //inventoryPart.colorID = Integer.parseInt(cursor.getString(6))
+            inventoryPart.extra = cursor.getString(7)
+            inventoryPart.itemType = getItemType(inventoryPart.typeID!!)
+            inventoryPart.qty =inventoryPart.quantityInSet
+            //inventoryPart.color =getColor(inventoryPart.colorID!!)
+            inventoryPart.name = getName(inventoryPart.itemId!!)
+            Log.i("---", "Name: "+inventoryPart.name)
+            inventoriesParts.add(inventoryPart)
+        }
+        Log.i("---", "Tu jestem KONIEC")
+        cursor.close()
+        db.close()
+        return inventoriesParts
 
 
     }

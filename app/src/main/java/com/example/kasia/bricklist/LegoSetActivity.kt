@@ -2,6 +2,7 @@ package com.example.kasia.bricklist
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
@@ -13,16 +14,21 @@ class LegoSetActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lego_set)
 
-        val listView: ListView = findViewById<ListView>(R.id.listView)
-        val names: ArrayList<String> = java.util.ArrayList()
-        names.add("Kasia")
-        names.add("Piciu")
-        names.add("Agata")
-        names.add("Anka")
+        val inventoryName: String = getIntent().getStringExtra("name")
+        val database = DataBaseHelper(this)
 
-        var adapter = MyCustomAdapter(this, names, this)
+        val listView: ListView = findViewById<ListView>(R.id.listView)
+        var inventoriesPart: ArrayList<InventoriesPart> = java.util.ArrayList()
+        Log.i("---", "Tu jestem 6")
+        inventoriesPart = database.getInventoriesParts(inventoryName)
+
+        Log.i("---", "Tu jestem 7")
+        var adapter = MyCustomAdapter(this, inventoriesPart, this)
+        Log.i("---", "Tu jestem 8")
         listView?.adapter = adapter
+        Log.i("---", "Tu jestem 9")
         adapter.notifyDataSetChanged()
+        Log.i("---", "Tu jestem 10")
     }
 
 
