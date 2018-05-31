@@ -109,7 +109,6 @@ class NewProjectActivity : AppCompatActivity() {
                                     "COLOR" -> brick.color = node.textContent.toInt()
                                     "EXTRA" -> brick.extra = node.textContent
                                     "ALTERNATE" -> brick.alternate = node.textContent
-
                                 }
                             }
                         }
@@ -117,19 +116,22 @@ class NewProjectActivity : AppCompatActivity() {
                         if(brick.alternate.equals("N") ){ //nie dodajemy alternate o innej wart niz  N
                             brick.typeID = database.getTypeID(brick)
                             brick.quantityInStore = 0
-                            brick.quantityInSet = brick.qty
+                            brick.quantityInSet = brick.qty!!
                             brick.colorID = database.getColorID(brick)
                             brick.id = database.generateID()
                             brick.inventoryID =inventoryID
                             brick.alternate = "N"
+                            brick.itemID_DB = database.getItemID_DB(brick)
+
+                            //handling image
+                            //var url:String =  "https://www.lego.com/service/bricks/5/2/" + brick.designID
+                            //if(!getImage(url, ))
+
                         }
                     }
-                    Log.i("---Jestem TU6","---Jestem TU6")
                     database.addBrick(brick)
-                    Log.i("---Dodalem do databasy"+brick.print(brick),"---Dodalem do databasy"+brick.print(brick))
                     database.close()
                 }
-
             }
         }
     }

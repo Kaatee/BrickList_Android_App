@@ -15,15 +15,16 @@ import android.widget.AdapterView
 
 
 class MainActivity : AppCompatActivity() {
+    var database: DataBaseHelper? = null
+    var inventoriesNames: ArrayList<String?> = java.util.ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         copyDB()
-        val database = DataBaseHelper(this)
+        database = DataBaseHelper(this)
         var inventories: ArrayList<Inventory>
-        inventories = database.getInventories()
-        val inventoriesNames : ArrayList<String?> = java.util.ArrayList()
+        inventories = database!!.getInventories()
         Log.i("--- Tu jestem 5", "--- Tu jestem 5: rozmiar :"+inventories.size.toString())
 
         for(i in 0..inventories.size-1){
@@ -53,6 +54,8 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
+
+
 
     public fun startActivityNewProject(){
         val intent = Intent(this, NewProjectActivity::class.java )

@@ -2,7 +2,9 @@ package com.example.kasia.bricklist
 
 import android.app.Activity
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.graphics.Color.*
+import android.provider.ContactsContract
 import android.text.Layout
 import android.view.LayoutInflater
 import android.view.View
@@ -12,14 +14,14 @@ import android.widget.*
  * Created by Kasia on 26.05.2018.
  */
 class MyCustomAdapter(private var activity: Activity, private var items: ArrayList<InventoriesPart>, private var context: Context) : BaseAdapter(){
-
+    var database = DataBaseHelper(context)
     private class ViewHolder(row: View?){
 
         var txtName: TextView? = null
         var available: TextView?= null
         var separator: TextView? = null
         var needed: TextView?=null
-        //var image: ImageView?=null
+        var image: ImageView?=null
         var plusButton: Button? =null
         var minusButton: Button? = null
         var layout: RelativeLayout? = null
@@ -27,9 +29,8 @@ class MyCustomAdapter(private var activity: Activity, private var items: ArrayLi
         init{
             this.txtName = row?.findViewById<TextView>(R.id.txtName)
             this.available = row?.findViewById<TextView>(R.id.available)
-            //this.separator = row?.findViewById<TextView>(R.id.separator)
             this.needed= row?.findViewById<TextView>(R.id.needed)
-            //this.image = row?.findViewById<ImageView>(R.id.imageView)
+            this.image = row?.findViewById<ImageView>(R.id.imageView)
             this.layout = row?.findViewById<RelativeLayout>(R.id.layout)
             this.plusButton = row?.findViewById<Button>(R.id.plusButton)
             this.minusButton = row?.findViewById<Button>(R.id.minusButton)
@@ -51,19 +52,30 @@ class MyCustomAdapter(private var activity: Activity, private var items: ArrayLi
             viewHolder = view.tag as ViewHolder
         }
 
-        var x = items[position]
-        viewHolder.txtName?.text = x.itemId
-        viewHolder.available?.text = x.quantityInStore.toString()
-        viewHolder.needed?.text = x.quantityInSet.toString()
-        //viewHolder.available?.text
+        var inventoryPart = items[position]
+        if(inventoryPart.name!!.length>0)
+            viewHolder.txtName?.text = inventoryPart.name
+        else if(viewHolder.txtName?.text!!.length>0)
+            viewHolder.txtName?.text = inventoryPart.itemId
+        else
+            viewHolder.txtName?.text = inventoryPart.itemType
+
+
+        viewHolder.available?.text = inventoryPart.quantityInStore.toString()
+        viewHolder.needed?.text = inventoryPart.quantityInSet.toString()
+
+        if(inventoryPart.image!=null){
+            val bitmap = BitmapFactory.decodeByteArray(inventoryPart.image, 0, inventoryPart.image!!.size)
+            viewHolder.image?.setImageBitmap(bitmap)
+        }
 
         viewHolder.plusButton?.setOnClickListener{
-            var av = viewHolder.available?.text.toString().toInt()
-            val need = viewHolder.needed?.text.toString().toInt()
-            if( av < need){
-                av=av+1
-                viewHolder.available?.text = av.toString()
-                if(av==need){
+            if( inventoryPart.quantityInStore < inventoryPart.quantityInSet){
+                inventoryPart.quantityInStore+=1
+                viewHolder.available?.text = inventoryPart.quantityInStore.toString()
+                //update bazy danych fun updateInventoriesPart(inventoryID:Int, itemID:Int, quantityInStore: Int, colorID: Int)
+                database.updateInventoriesPart(items[position].inventoryID!!, items[position].itemId!!,items[position].quantityInStore!!, items[position].colorID!!)
+                if(inventoryPart.quantityInStore==inventoryPart.quantityInSet){
                     viewHolder.layout?.setBackgroundColor(GREEN)
                 }
             }
@@ -74,12 +86,12 @@ class MyCustomAdapter(private var activity: Activity, private var items: ArrayLi
         }
 
         viewHolder.minusButton?.setOnClickListener{
-            var av = viewHolder.available?.text.toString().toInt()
-            val need = viewHolder.needed?.text.toString().toInt()
-            if(av>0) {
-                av = av - 1
-                viewHolder.available?.text = av.toString()
-                if (av != need) {
+            if(inventoryPart.quantityInStore>0) {
+                inventoryPart.quantityInStore -= 1
+                viewHolder.available?.text = inventoryPart.quantityInStore.toString()
+                //update bazy
+                database.updateInventoriesPart(items[position].inventoryID!!, items[position].itemId!!, items[position].quantityInStore!!, items[position].colorID!!)
+                if (inventoryPart.quantityInStore != inventoryPart.quantityInSet) {
                     viewHolder.layout?.setBackgroundColor(TRANSPARENT)
                 }
             }

@@ -153,7 +153,8 @@ class DataBaseHelper
         db.close()
         return quantityInSet
     }
-/*
+
+    /*
     fun getQuantityInStore(x: InventoriesPart):Int{
         val query = "SELECT quantityInStore FROM InventoriesParts WHERE id = '" +x.id +"'"
         val db = this.writableDatabase
@@ -168,6 +169,7 @@ class DataBaseHelper
         return quantityInStore
     }
 */
+
     fun getColorID(x: InventoriesPart):Int{
         val query = "SELECT id FROM Colors WHERE Code = '" +x.color +"'"
         val db = this.writableDatabase
@@ -180,6 +182,20 @@ class DataBaseHelper
         cursor.close()
         db.close()
         return colorID
+    }
+
+    fun getCode_DesignID(x: InventoriesPart):Int{
+        val query = "SELECT Code FROM Codes WHERE itemID = " + x.itemID_DB + "AND ColorID = " + x.colorID
+        val db = this.writableDatabase
+        val cursor = db.rawQuery(query, null)
+        var designID: Int = 0
+
+        if(cursor.moveToFirst()){
+            designID = Integer.parseInt(cursor.getString(0))
+        }
+        cursor.close()
+        db.close()
+        return designID
     }
 
     fun generateID():Int{
@@ -196,6 +212,22 @@ class DataBaseHelper
         return newID
     }
 
+    fun getImage(x: InventoriesPart): ByteArray?{
+        val query = "SELECT Image FROM Codes WHERE Code = " +x.designID
+        val db = this.writableDatabase
+        val cursor = db.rawQuery(query, null)
+        var image: ByteArray? = null
+
+        if(cursor.moveToFirst()){
+            image = cursor.getBlob(0)
+        }
+        cursor.close()
+        db.close()
+        return image
+
+
+
+    }
 
     fun addBrick(brick: InventoriesPart){
         val values = ContentValues()
@@ -203,7 +235,7 @@ class DataBaseHelper
         values.put("QuantityInSet",brick.quantityInSet)
         values.put("QuantityInStore",brick.quantityInStore)
         values.put("ColorID",brick.colorID)
-        values.put("ItemID",brick.itemId)
+        values.put("ItemID",brick.itemID_DB)
         values.put("InventoryID",brick.inventoryID)
         values.put("Id",brick.id)
         values.put("Extra",brick.extra)
@@ -284,9 +316,9 @@ class DataBaseHelper
         return color
     }
 
-    fun getName(partID: String): String{
+    fun getName(ItemID_DB: Int): String{
         var name: String =""
-        val query = "Select Name FROM Parts WHERE code = '"+ partID+"'"
+        val query = "Select Name FROM Parts WHERE id = " + ItemID_DB
         Log.i("---", "Tu jestem cccc")
         val db = this.writableDatabase
         val cursor = db.rawQuery(query, null)
@@ -324,19 +356,17 @@ class DataBaseHelper
             inventoryPart.id = Integer.parseInt(cursor.getString(0))
             inventoryPart.inventoryID = Integer.parseInt(cursor.getString(1))
             inventoryPart.typeID = Integer.parseInt(cursor.getString(2))
-            inventoryPart.itemId = cursor.getString(3)
+            inventoryPart.itemID_DB = Integer.parseInt(cursor.getString(3))
             inventoryPart.quantityInSet = Integer.parseInt(cursor.getString(4))
             inventoryPart.quantityInStore = Integer.parseInt(cursor.getString(5))
-
             inventoryPart.colorID = Integer.parseInt(cursor.getString(6))
-
             inventoryPart.extra = cursor.getString(7)
+
+
             inventoryPart.itemType = getItemType(inventoryPart.typeID!!)
             inventoryPart.qty =inventoryPart.quantityInSet
-
             inventoryPart.color =getColor(inventoryPart.colorID!!)
-
-            inventoryPart.name = getName(inventoryPart.itemId!!)
+            inventoryPart.name = getName(inventoryPart.itemID_DB!!)
 
             inventoriesParts.add(inventoryPart)
         }
@@ -346,16 +376,16 @@ class DataBaseHelper
             inventoryPart.id = Integer.parseInt(cursor.getString(0))
             inventoryPart.inventoryID = Integer.parseInt(cursor.getString(1))
             inventoryPart.typeID = Integer.parseInt(cursor.getString(2))
-            inventoryPart.itemId = cursor.getString(3)
+            inventoryPart.itemID_DB = Integer.parseInt(cursor.getString(3))
             inventoryPart.quantityInSet = Integer.parseInt(cursor.getString(4))
             inventoryPart.quantityInStore = Integer.parseInt(cursor.getString(5))
-            Log.i("---", "InSet: "+inventoryPart.quantityInSet + " InStore: "+ inventoryPart.quantityInStore)
             inventoryPart.colorID = Integer.parseInt(cursor.getString(6))
             inventoryPart.extra = cursor.getString(7)
+
             inventoryPart.itemType = getItemType(inventoryPart.typeID!!)
             inventoryPart.qty =inventoryPart.quantityInSet
             inventoryPart.color =getColor(inventoryPart.colorID!!)
-            inventoryPart.name = getName(inventoryPart.itemId!!)
+            inventoryPart.name = getName(inventoryPart.itemID_DB!!)
             inventoriesParts.add(inventoryPart)
         }
         Log.i("---", "Tu jestem KONIEC")
@@ -364,6 +394,27 @@ class DataBaseHelper
         return inventoriesParts
 
 
+    }
+
+    fun updateInventoriesPart(inventoryID:Int, itemID:String, quantityInStore: Int, colorID: Int){
+        val db = writableDatabase
+        db.execSQL("UPDATE InventoriesParts SET QuantityInStore = " + quantityInStore + " WHERE InventoryID = " + inventoryID+
+                " AND ColorID = " + colorID + " AND ItemID = " + itemID)
+        db.close()
+    }
+
+    fun getItemID_DB(brick: InventoriesPart): Int{
+        var itemID_DB: Int =0
+        val query = "Select id FROM Parts WHERE code = '"+ brick.itemId+"'"
+        Log.i("---", "Tu jestem cccc")
+        val db = this.writableDatabase
+        val cursor = db.rawQuery(query, null)
+        if(cursor.moveToFirst()){
+            itemID_DB = Integer.parseInt(cursor.getString(0))
+        }
+        cursor.close()
+        db.close()
+        return itemID_DB
     }
 
 }
