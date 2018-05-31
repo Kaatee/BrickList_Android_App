@@ -10,7 +10,6 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.sql.SQLException
 
-
 /**
  * Created by Kasia on 30.05.2018.
  */
@@ -27,31 +26,24 @@ class DataBaseHelper
     /**
      * Creates a empty database on the system and rewrites it with your own database.
      */
+
     @Throws(IOException::class)
     fun createDataBase() {
-
         val dbExist = checkDataBase()
 
         if (dbExist) {
             //do nothing - database already exist
         } else {
-
             //By calling this method and empty database will be created into the default system path
             //of your application so we are gonna be able to overwrite that database with our database.
             this.readableDatabase
 
             try {
-
                 copyDataBase()
-
             } catch (e: IOException) {
-
                 throw Error("Error copying database")
-
             }
-
         }
-
     }
 
     /**
@@ -59,25 +51,18 @@ class DataBaseHelper
      * @return true if it exists, false if it doesn't
      */
     private fun checkDataBase(): Boolean {
-
         var checkDB: SQLiteDatabase? = null
 
         try {
             val myPath = DB_PATH + DB_NAME
             checkDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY)
-
         } catch (e: SQLiteException) {
-
             //database does't exist yet.
-
         }
 
         if (checkDB != null) {
-
             checkDB.close()
-
         }
-
         return if (checkDB != null) true else false
     }
 
@@ -88,7 +73,6 @@ class DataBaseHelper
      */
     @Throws(IOException::class)
     private fun copyDataBase() {
-
         //Open your local db as the input stream
         val myInput = myContext.getAssets().open(DB_NAME)
 
@@ -105,38 +89,30 @@ class DataBaseHelper
             myOutput.write(buffer, 0, length)
             length = myInput.read(buffer)
         }
-
         //Close the streams
         myOutput.flush()
         myOutput.close()
         myInput.close()
-
     }
 
     @Throws(SQLException::class)
     fun openDataBase() {
-
         //Open the database
         val myPath = DB_PATH + DB_NAME
         myDataBase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY)
-
     }
 
     @Synchronized override fun close() {
-
         if (myDataBase != null)
             myDataBase!!.close()
 
         super.close()
-
     }
 
     override fun onCreate(db: SQLiteDatabase) {
-
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-
     }
 
     companion object {
@@ -147,17 +123,11 @@ class DataBaseHelper
         private val DB_NAME = "xyz.db"
     }
 
-    // Add your public helper methods to access and get content from the database.
-    // You could return cursors by doing "return myDataBase.query(....)" so it'd be easy
-    // to you to create adapters for your views.
     fun getTypeID(x: InventoriesPart):Int{
         val query = "SELECT id FROM ItemTypes WHERE code = '" +x.itemType +"'"
         val db = this.writableDatabase
-        Log.i("----Jestem TUc","---Jestem TUc")
         try {
             val cursor = db.rawQuery(query, null)
-
-            Log.i("----Jestem TUd","---Jestem TUd")
             var typeID = 0
 
             if(cursor.moveToFirst()){
@@ -225,20 +195,8 @@ class DataBaseHelper
         db.close()
         return newID
     }
-    /*
 
-                                        "ITEMID" -> brick.itemId = node.textContent
-                                        "QTY" -> brick.qty = node.textContent.toInt()
-                                        "COLOR" -> brick.color = node.textContent.toInt()
-                                        "EXTRA" -> brick.extra = node.textContent
-                                        "ALTERNATE" -> brick.alternate = node.textContent
-                                brick.typeID = database.getTypeID(brick)
-                                brick.quantityInStore = 0
-                                brick.quantityInSet = database.getQuantityInSet(brick)
-                                brick.colorID = database.getColorID(brick)
-                                brick.id = database.generateID()
-                                brick.inventoryID =inventoryID
-     */
+
     fun addBrick(brick: InventoriesPart){
         val values = ContentValues()
         values.put("TypeID",brick.typeID)
@@ -251,6 +209,51 @@ class DataBaseHelper
         val db = this.writableDatabase
         db.insert("InventoriesParts", null, values)
         db.close()
+    }
+
+    fun addInventory(inventory: Inventory){
+        val values = ContentValues()
+        values.put("Id", inventory.id)
+        values.put("Name",inventory.name)
+        values.put("Active",inventory.active)
+        values.put("LastAccessed", inventory.lastAccessed)
+
+        val db = this.writableDatabase
+        db.insert("Inventories",null,values)
+        db.close()
+    }
+
+
+    fun getInventories(): ArrayList<Inventory>{
+        val inventories : ArrayList<Inventory> = java.util.ArrayList()
+
+        val query = "Select * FROM Inventories"
+        val db = this.writableDatabase
+        val cursor = db.rawQuery(query, null)
+        var inventory =Inventory()
+
+        if(cursor.moveToFirst()){
+            inventory.id = Integer.parseInt(cursor.getString(0))
+            inventory.name = cursor.getString(1)
+            inventory.active = Integer.parseInt(cursor.getString(2))
+            inventory.lastAccessed = Integer.parseInt(cursor.getString(3))
+            inventories.add(inventory)
+        }
+
+        while(cursor.moveToNext()){
+            var inventory =Inventory()
+            inventory.id = Integer.parseInt(cursor.getString(0))
+            inventory.name = cursor.getString(1)
+            inventory.active = Integer.parseInt(cursor.getString(2))
+            inventory.lastAccessed = Integer.parseInt(cursor.getString(3))
+            inventories.add(inventory)
+        }
+        cursor.close()
+        db.close()
+        return inventories
+
+
+
     }
 
 }

@@ -16,6 +16,7 @@ import org.w3c.dom.NodeList
 import java.io.*
 import java.net.MalformedURLException
 import java.net.URL
+import java.util.*
 import javax.xml.parsers.DocumentBuilderFactory
 
 class NewProjectActivity : AppCompatActivity() {
@@ -71,14 +72,13 @@ class NewProjectActivity : AppCompatActivity() {
         }
     }
 
-    fun loadData(inventoryID: Int){
+    fun loadData(inventoryID: Int, inventoryName: String){
 
         val filename = "downloadedXML.xml"
         val path = filesDir
         val inDir = File(path, "XML")
 
         if(inDir.exists()){
-            Log.i("---Jestem TU","---Jestem TU")
             val file = File(inDir, filename)
             if(file.exists()){
                 val xmlDoc : Document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file)
@@ -87,26 +87,19 @@ class NewProjectActivity : AppCompatActivity() {
 
                //val database =MyDBHandler(this, null, null, 1)
                 val database = DataBaseHelper(this)
-                ///try{database.openDataBase()} catch(e:Exception){
-                 ///   Log.i("---Blad: "+e.message,"---Blad: "+e.message )
-               /// }
+
+                val inventory = Inventory(inventoryID, inventoryName,1, Date().time.toInt())
+                database.addInventory(inventory)
 
                 val items : NodeList = xmlDoc.getElementsByTagName("ITEM")
                 val brick = InventoriesPart()
-                Log.i("----Jestem TU2","---Jestem TU2")
                 for(i in 0..items.length-1){
-                    Log.i("----Jestem TU2.5","---Jestem TU2.5")
                     val itemNode: Node = items.item(i)
                     if(itemNode.getNodeType() == Node.ELEMENT_NODE){
-                        Log.i("----Jestem TU3","---Jestem TU3")
                         val elem = itemNode as Element
                         val children = elem.childNodes
 
-
-                         //nie dodajemy alternate o innej wart niz  N
-
                         for (j in 0..children.length-1){
-                            Log.i("---Jestem TU4","---Jestem TU4")
                             val node = children.item(j)
                             if(node is Element){
                                 when(node.nodeName){
@@ -121,19 +114,13 @@ class NewProjectActivity : AppCompatActivity() {
                             }
                         }
 
-                        if(brick.alternate.equals("N") ){
-                            Log.i("---Jestem TU5.0","---Jestem TU5.0")
-                            //try {
-                                brick.typeID = database.getTypeID(brick)
-                            //} catch(e:Exception){Log.i("---"+e.message, "---"+e.message)}
-                           // Log.i("---Jestem TU5.1","---Jestem TU5.1")
+                        if(brick.alternate.equals("N") ){ //nie dodajemy alternate o innej wart niz  N
+                            brick.typeID = database.getTypeID(brick)
                             brick.quantityInStore = 0
-                            Log.i("---Jestem TU5.2","---Jestem TU5.2")
                             brick.quantityInSet = database.getQuantityInSet(brick)
                             brick.colorID = database.getColorID(brick)
                             brick.id = database.generateID()
                             brick.inventoryID =inventoryID
-                            Log.i("---Jestem TU5","---Jestem TU5")
                         }
                     }
                     Log.i("---Jestem TU6","---Jestem TU6")
@@ -148,17 +135,15 @@ class NewProjectActivity : AppCompatActivity() {
 
     private inner class XmlDownloader: AsyncTask<String, Int, String>(){
 
-        override fun doInBackground(vararg params: String?): String { //params - full url
+        override fun doInBackground(vararg params: String?): String {
             try {
                 var filename = "downloadedXML.xml"
 
                 val url = URL(params[0])
                 val connection = url.openConnection()
                 connection.connect()
-               // val lengthOfFile = connection.contentLength
                 val isStream = url.openStream()
                 val testDirectory = File("$filesDir/XML")
-                //Log.i("----- XXXXX"+"$filesDir/XML","-----$filesDir/XML")
                 if (!testDirectory.exists()) testDirectory.mkdir()
                 val fos = FileOutputStream("$testDirectory/$filename")
                 val data = ByteArray(1024)
@@ -187,11 +172,13 @@ class NewProjectActivity : AppCompatActivity() {
                 return "IO Exception"
             }
 
-//http://fcds.cs.put.poznan.pl/MyWeb/BL/615"
             var idT: String? = params[0]?.split("/")?.get(5)
             var idT2: String? = idT?.split(".")?.get(0)
             var x: Int = idT2!!.toInt()
-            loadData(x)
+
+            val projectNameEditText: EditText = findViewById<EditText>(R.id.enterNameText)
+            var projectName: String = projectNameEditText.text.toString()
+            loadData(x,projectName)
             return "success"
         }
     }

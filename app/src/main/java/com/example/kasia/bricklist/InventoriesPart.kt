@@ -21,7 +21,7 @@ class InventoriesPart {
     var colorID:Int? = null
 
     fun print(brick: InventoriesPart){
-        var str = "------ itemType: "+brick.itemType + "itemID: " +  brick.itemId+ "gty: " + brick.qty + "color: "+ brick.color+"extra: " +
+        var str = "------ itemType: "+brick.itemType + "itemID: " +  brick.itemId+ "gty: " + brick.qty?.toString() + "color: "+ brick.color+"extra: " +
                 brick.extra+ "alternate: " + brick.alternate+ "id: "+ brick.id+ "InventoryID: "+ brick.inventoryID + "typeID: "+
                 brick.typeID + "quantityInSet: " +brick.quantityInSet +"quantityInStore: " +brick.quantityInStore+ "colorID: "+brick.colorID
         Log.i(str, str )
