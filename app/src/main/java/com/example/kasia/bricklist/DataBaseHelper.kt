@@ -299,20 +299,15 @@ class DataBaseHelper
     }
 
     fun getInventoryID(inventoryName: String):String{
-        Log.i("---", "Tu jestem aa")
         var name: String =""
-        Log.i("---", "Tu jestem bb")
         val query = "Select id FROM Inventories WHERE Name = '"+ inventoryName+"'"
-        Log.i("---", "Tu jestem cc")
         val db = this.writableDatabase
         val cursor = db.rawQuery(query, null)
-        Log.i("---", "Tu jestem dd")
         if(cursor.moveToFirst()){
             name = cursor.getString(0)
         }
         cursor.close()
         db.close()
-        Log.i("---", "Tu jestem ee: "+ name)
         return name
     }
 
@@ -332,23 +327,16 @@ class DataBaseHelper
             inventoryPart.itemId = cursor.getString(3)
             inventoryPart.quantityInSet = Integer.parseInt(cursor.getString(4))
             inventoryPart.quantityInStore = Integer.parseInt(cursor.getString(5))
-            Log.i("---", "Tu jestem m")
-            ////try {
-               //// inventoryPart.colorID = Integer.parseInt(cursor.getString(6))
-            ////} catch(e:Exception){Log.i("---", "Blad przed: "+e.message.toString())}
 
-            Log.i("---", "Tu jestem n")
+            inventoryPart.colorID = Integer.parseInt(cursor.getString(6))
+
             inventoryPart.extra = cursor.getString(7)
-            Log.i("---", "Tu jestem o")
             inventoryPart.itemType = getItemType(inventoryPart.typeID!!)
-            Log.i("---", "Tu jestem p")
             inventoryPart.qty =inventoryPart.quantityInSet
-            Log.i("---", "Tu jestem r")
-            /////inventoryPart.color =getColor(inventoryPart.colorID!!)
-            Log.i("---", "Tu jestem s")
+
+            inventoryPart.color =getColor(inventoryPart.colorID!!)
 
             inventoryPart.name = getName(inventoryPart.itemId!!)
-            Log.i("---", "Tu jestem t")
 
             inventoriesParts.add(inventoryPart)
         }
@@ -362,13 +350,12 @@ class DataBaseHelper
             inventoryPart.quantityInSet = Integer.parseInt(cursor.getString(4))
             inventoryPart.quantityInStore = Integer.parseInt(cursor.getString(5))
             Log.i("---", "InSet: "+inventoryPart.quantityInSet + " InStore: "+ inventoryPart.quantityInStore)
-            //inventoryPart.colorID = Integer.parseInt(cursor.getString(6))
+            inventoryPart.colorID = Integer.parseInt(cursor.getString(6))
             inventoryPart.extra = cursor.getString(7)
             inventoryPart.itemType = getItemType(inventoryPart.typeID!!)
             inventoryPart.qty =inventoryPart.quantityInSet
-            //inventoryPart.color =getColor(inventoryPart.colorID!!)
+            inventoryPart.color =getColor(inventoryPart.colorID!!)
             inventoryPart.name = getName(inventoryPart.itemId!!)
-            Log.i("---", "Name: "+inventoryPart.name)
             inventoriesParts.add(inventoryPart)
         }
         Log.i("---", "Tu jestem KONIEC")
