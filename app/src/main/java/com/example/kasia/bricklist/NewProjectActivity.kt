@@ -1,5 +1,6 @@
 package com.example.kasia.bricklist
 
+import android.content.Context
 import android.content.Intent
 import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
@@ -18,6 +19,13 @@ import java.net.MalformedURLException
 import java.net.URL
 import java.util.*
 import javax.xml.parsers.DocumentBuilderFactory
+import android.graphics.Bitmap.CompressFormat
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+
+
+
+
 
 class NewProjectActivity : AppCompatActivity() {
 
@@ -66,6 +74,7 @@ class NewProjectActivity : AppCompatActivity() {
             ///////
 
             var intent = Intent(this, MainActivity::class.java )
+            intent.putExtra("code","1")
             startActivity(intent)
 
 
@@ -122,18 +131,60 @@ class NewProjectActivity : AppCompatActivity() {
                             brick.inventoryID =inventoryID
                             brick.alternate = "N"
                             brick.itemID_DB = database.getItemID_DB(brick)
+                            try {
+                                brick.designID = database.getCode_DesignID(brick)
+                            }catch(e:Exception){
+                                Log.i("---", "Blad newProject ladowania obrazka: "+e.message)
+                            }
 
                             //handling image
                             //var url:String =  "https://www.lego.com/service/bricks/5/2/" + brick.designID
                             //if(!getImage(url, ))
+                            ///brick.image = database.getImage(brick)
+                            try {
+                                //https://www.lego.com/service/bricks/5/2/300126"
+                                //var bit = BitmapFactory.decodeStream(URL("https://www.lego.com/service/bricks/5/2/"+brick.designID).content as InputStream)
+                                var bit = BitmapFactory.decodeStream(URL("https://www.lego.com/service/bricks/5/2/300126").content as InputStream)
 
+                                if(bit!=null){
+                                    Log.i("---", "Bitmapa jest rozna od null UDALO SIE")
+                                }
+                                else{
+                                    Log.i("---", "Bitmapa = null  NIEUDALO SIE")
+                                }
+
+                                brick.image = getBytesFromBitmap(bit)
+                                /*///---------ZAPIS DO PLIKU NA PROBE---------
+                                val fos : FileOutputStream  = openFileOutput("hihi", Context.MODE_PRIVATE);
+                                try {
+
+                                    bit.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                                }
+                                catch (ex: Exception) {
+                                Log.e("---Exception", ex.toString())
+                                }
+                                fos.close()
+
+                                *////-------------------
+                            } catch (e: Exception) {Log.i("---","Blad ladowania URL") }
+
+
+                            /////////////
+                            database.close()
                         }
                     }
                     database.addBrick(brick)
-                    database.close()
+
                 }
             }
         }
+    }
+
+    //jpg to byte array
+    fun getBytesFromBitmap(bitmap: Bitmap): ByteArray {
+        val stream = ByteArrayOutputStream()
+        bitmap.compress(CompressFormat.JPEG, 70, stream)
+        return stream.toByteArray()
     }
 
     private inner class XmlDownloader: AsyncTask<String, Int, String>(){
@@ -182,6 +233,13 @@ class NewProjectActivity : AppCompatActivity() {
             val projectNameEditText: EditText = findViewById<EditText>(R.id.enterNameText)
             var projectName: String = projectNameEditText.text.toString()
             loadData(x,projectName)
+
+            ///
+            //////var intent = Intent(this, MainActivity::class.java )
+            //////intent.putExtra("code","1")
+            //////startActivity(intent)
+
+            ///
             return "success"
         }
     }

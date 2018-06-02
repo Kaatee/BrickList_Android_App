@@ -19,16 +19,11 @@ class LegoSetActivity : AppCompatActivity() {
 
         val listView: ListView = findViewById<ListView>(R.id.listView)
         var inventoriesPart: ArrayList<InventoriesPart> = java.util.ArrayList()
-        Log.i("---", "Tu jestem 6")
         inventoriesPart = database.getInventoriesParts(inventoryName)
 
-        Log.i("---", "Tu jestem 7")
         var adapter = MyCustomAdapter(this, inventoriesPart, this)
-        Log.i("---", "Tu jestem 8")
         listView?.adapter = adapter
-        Log.i("---", "Tu jestem 9")
         adapter.notifyDataSetChanged()
-        Log.i("---", "Tu jestem 10")
     }
 
 

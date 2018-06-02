@@ -4,17 +4,20 @@ import android.app.Activity
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.graphics.Color.*
-import android.provider.ContactsContract
-import android.text.Layout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import android.graphics.Bitmap
+import android.util.Log
+import java.io.ByteArrayInputStream
+
+
 /**
  * Created by Kasia on 26.05.2018.
  */
 class MyCustomAdapter(private var activity: Activity, private var items: ArrayList<InventoriesPart>, private var context: Context) : BaseAdapter(){
-    var database = DataBaseHelper(context)
+   // var database = DataBaseHelper(context)
     private class ViewHolder(row: View?){
 
         var txtName: TextView? = null
@@ -64,17 +67,37 @@ class MyCustomAdapter(private var activity: Activity, private var items: ArrayLi
         viewHolder.available?.text = inventoryPart.quantityInStore.toString()
         viewHolder.needed?.text = inventoryPart.quantityInSet.toString()
 
+        //handling image
+        try {
+            Log.i("---","a")
+            var xx: ByteArray = inventoryPart.image!!
+            Log.i("---","a2")
+            var bitmap: Bitmap = ByteArrayToBitmap(xx)
+            Log.i("---","b")
+            viewHolder.image?.setImageBitmap(bitmap)
+            Log.i("---","c")
+        }catch(e:Exception){
+            Log.i("---", "Blad obrazka: "+e.message)
+        }
+
+
         if(inventoryPart.image!=null){
             val bitmap = BitmapFactory.decodeByteArray(inventoryPart.image, 0, inventoryPart.image!!.size)
             viewHolder.image?.setImageBitmap(bitmap)
         }
 
+        if(inventoryPart.quantityInStore==inventoryPart.quantityInSet){
+            viewHolder.layout?.setBackgroundColor(GREEN)
+        }
+
         viewHolder.plusButton?.setOnClickListener{
+            var database = DataBaseHelper(context)
             if( inventoryPart.quantityInStore < inventoryPart.quantityInSet){
                 inventoryPart.quantityInStore+=1
                 viewHolder.available?.text = inventoryPart.quantityInStore.toString()
-                //update bazy danych fun updateInventoriesPart(inventoryID:Int, itemID:Int, quantityInStore: Int, colorID: Int)
-                database.updateInventoriesPart(items[position].inventoryID!!, items[position].itemId!!,items[position].quantityInStore!!, items[position].colorID!!)
+
+                database.updateInventoriesPart(items[position].inventoryID!!, items[position].itemID_DB!!,items[position].quantityInStore!!, items[position].colorID!!)
+
                 if(inventoryPart.quantityInStore==inventoryPart.quantityInSet){
                     viewHolder.layout?.setBackgroundColor(GREEN)
                 }
@@ -82,15 +105,18 @@ class MyCustomAdapter(private var activity: Activity, private var items: ArrayLi
             else{
                 Toast.makeText(context, "Masz juz tyle klockow, ile potrzebujesz", Toast.LENGTH_LONG).show()
             }
+            database.close()
 
         }
 
         viewHolder.minusButton?.setOnClickListener{
+            var database = DataBaseHelper(context)
             if(inventoryPart.quantityInStore>0) {
                 inventoryPart.quantityInStore -= 1
                 viewHolder.available?.text = inventoryPart.quantityInStore.toString()
                 //update bazy
-                database.updateInventoriesPart(items[position].inventoryID!!, items[position].itemId!!, items[position].quantityInStore!!, items[position].colorID!!)
+                database.updateInventoriesPart(items[position].inventoryID!!, items[position].itemID_DB!!, items[position].quantityInStore!!, items[position].colorID!!)
+
                 if (inventoryPart.quantityInStore != inventoryPart.quantityInSet) {
                     viewHolder.layout?.setBackgroundColor(TRANSPARENT)
                 }
@@ -98,11 +124,19 @@ class MyCustomAdapter(private var activity: Activity, private var items: ArrayLi
             else {
                 Toast.makeText(context, "Nie mozesz miec mniej niz 0 klockow", Toast.LENGTH_LONG).show()
             }
-
+            database.close()
         }
 
 
         return view as View
+    }
+
+
+    fun ByteArrayToBitmap(byteArray: ByteArray): Bitmap {
+        Log.i("---", "kasia")
+        val arrayInputStream = ByteArrayInputStream(byteArray)
+        Log.i("---", "piciu")
+        return BitmapFactory.decodeStream(arrayInputStream)
     }
 
     override fun getItem(p0: Int): Any {

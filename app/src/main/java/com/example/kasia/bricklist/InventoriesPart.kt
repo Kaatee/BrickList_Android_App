@@ -26,13 +26,4 @@ class InventoriesPart {
     var image: ByteArray? = null
     var designID: Int? =null
 
-    fun print(brick: InventoriesPart){
-        var str = "------ itemType: "+brick.itemType + "itemID: " +  brick.itemId+ "gty: " + brick.qty?.toString() + "color: "+ brick.color+"extra: " +
-                brick.extra+  "id: "+ brick.id+ "InventoryID: "+ brick.inventoryID + "typeID: "+
-                brick.typeID + "quantityInSet: " +brick.quantityInSet +"quantityInStore: " +brick.quantityInStore+ "colorID: "+brick.colorID
-        Log.i(str, str )
-
-    }
-
-
 }

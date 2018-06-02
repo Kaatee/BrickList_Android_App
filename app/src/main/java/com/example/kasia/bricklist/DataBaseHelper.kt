@@ -185,7 +185,7 @@ class DataBaseHelper
     }
 
     fun getCode_DesignID(x: InventoriesPart):Int{
-        val query = "SELECT Code FROM Codes WHERE itemID = " + x.itemID_DB + "AND ColorID = " + x.colorID
+        val query = "SELECT Code FROM Codes WHERE itemID = " + x.itemID_DB + " AND ColorID = " + x.colorID
         val db = this.writableDatabase
         val cursor = db.rawQuery(query, null)
         var designID: Int = 0
@@ -258,7 +258,6 @@ class DataBaseHelper
         db.close()
     }
 
-
     fun getInventories(): ArrayList<Inventory>{
         val inventories : ArrayList<Inventory> = java.util.ArrayList()
 
@@ -319,7 +318,6 @@ class DataBaseHelper
     fun getName(ItemID_DB: Int): String{
         var name: String =""
         val query = "Select Name FROM Parts WHERE id = " + ItemID_DB
-        Log.i("---", "Tu jestem cccc")
         val db = this.writableDatabase
         val cursor = db.rawQuery(query, null)
         if(cursor.moveToFirst()){
@@ -371,7 +369,6 @@ class DataBaseHelper
             inventoriesParts.add(inventoryPart)
         }
         while(cursor.moveToNext()){
-            Log.i("---", "Tu jestem u")
             var inventoryPart =InventoriesPart()
             inventoryPart.id = Integer.parseInt(cursor.getString(0))
             inventoryPart.inventoryID = Integer.parseInt(cursor.getString(1))
@@ -388,7 +385,6 @@ class DataBaseHelper
             inventoryPart.name = getName(inventoryPart.itemID_DB!!)
             inventoriesParts.add(inventoryPart)
         }
-        Log.i("---", "Tu jestem KONIEC")
         cursor.close()
         db.close()
         return inventoriesParts
@@ -396,17 +392,21 @@ class DataBaseHelper
 
     }
 
-    fun updateInventoriesPart(inventoryID:Int, itemID:String, quantityInStore: Int, colorID: Int){
+    fun updateInventoriesPart(inventoryID:Int, itemID:Int, quantityInStore: Int, colorID: Int){
+        Log.i("---", "Tu jestem a")
         val db = writableDatabase
-        db.execSQL("UPDATE InventoriesParts SET QuantityInStore = " + quantityInStore + " WHERE InventoryID = " + inventoryID+
-                " AND ColorID = " + colorID + " AND ItemID = " + itemID)
+        Log.i("---", "Tu jestem b")
+        val query = "UPDATE InventoriesParts SET QuantityInStore = " + quantityInStore + " WHERE InventoryID = " + inventoryID+
+                " AND ColorID = " + colorID + " AND ItemID = " + itemID
+        Log.i("---", "Tu jestem c")
+        db.execSQL(query)
+        Log.i("---", "Tu jestem d")
         db.close()
     }
 
     fun getItemID_DB(brick: InventoriesPart): Int{
         var itemID_DB: Int =0
         val query = "Select id FROM Parts WHERE code = '"+ brick.itemId+"'"
-        Log.i("---", "Tu jestem cccc")
         val db = this.writableDatabase
         val cursor = db.rawQuery(query, null)
         if(cursor.moveToFirst()){
