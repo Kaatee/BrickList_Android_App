@@ -123,6 +123,7 @@ class DataBaseHelper
         private val DB_NAME = "xyz.db"
     }
 
+    /// -----   F U N C T I O N S  -----
     fun getTypeID(x: InventoriesPart):Int{
         val query = "SELECT id FROM ItemTypes WHERE code = '" +x.itemType +"'"
         val db = this.writableDatabase
@@ -224,9 +225,6 @@ class DataBaseHelper
         cursor.close()
         db.close()
         return image
-
-
-
     }
 
     fun addBrick(brick: InventoriesPart){
@@ -393,14 +391,10 @@ class DataBaseHelper
     }
 
     fun updateInventoriesPart(inventoryID:Int, itemID:Int, quantityInStore: Int, colorID: Int){
-        Log.i("---", "Tu jestem a")
         val db = writableDatabase
-        Log.i("---", "Tu jestem b")
         val query = "UPDATE InventoriesParts SET QuantityInStore = " + quantityInStore + " WHERE InventoryID = " + inventoryID+
                 " AND ColorID = " + colorID + " AND ItemID = " + itemID
-        Log.i("---", "Tu jestem c")
         db.execSQL(query)
-        Log.i("---", "Tu jestem d")
         db.close()
     }
 

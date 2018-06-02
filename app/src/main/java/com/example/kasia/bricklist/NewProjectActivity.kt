@@ -24,11 +24,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 
 
-
-
-
 class NewProjectActivity : AppCompatActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_project)
@@ -70,14 +66,8 @@ class NewProjectActivity : AppCompatActivity() {
             var projectName: String = projectNameEditText.text.toString()
             val filename = itemID+"__"+projectName+".xml"
             downloadData(path)
+
             Toast.makeText(this,"Projekt zostal utworzony",Toast.LENGTH_LONG).show()
-            ///////
-
-            var intent = Intent(this, MainActivity::class.java )
-            intent.putExtra("code","1")
-            startActivity(intent)
-
-
         }
     }
 
@@ -141,35 +131,32 @@ class NewProjectActivity : AppCompatActivity() {
                             //var url:String =  "https://www.lego.com/service/bricks/5/2/" + brick.designID
                             //if(!getImage(url, ))
                             ///brick.image = database.getImage(brick)
+
+                            //https://www.lego.com/service/bricks/5/2/300126"
+                            //var bit = BitmapFactory.decodeStream(URL("https://www.lego.com/service/bricks/5/2/"+brick.designID).content as InputStream)
+                            var bit = BitmapFactory.decodeStream(URL("https://www.lego.com/service/bricks/5/2/300126").content as InputStream)
+
+                            if(bit!=null){
+                                Log.i("---", "Bitmapa jest rozna od null UDALO SIE")
+                            }
+                            else{
+                                Log.i("---", "Bitmapa = null  NIEUDALO SIE")
+                            }
+
+
+
+
+                            brick.image = getBytesFromBitmap(bit)
+                            /*///---------ZAPIS DO PLIKU NA PROBE---------
+                            val fos : FileOutputStream  = openFileOutput("hihi", Context.MODE_PRIVATE);
                             try {
-                                //https://www.lego.com/service/bricks/5/2/300126"
-                                //var bit = BitmapFactory.decodeStream(URL("https://www.lego.com/service/bricks/5/2/"+brick.designID).content as InputStream)
-                                var bit = BitmapFactory.decodeStream(URL("https://www.lego.com/service/bricks/5/2/300126").content as InputStream)
-
-                                if(bit!=null){
-                                    Log.i("---", "Bitmapa jest rozna od null UDALO SIE")
-                                }
-                                else{
-                                    Log.i("---", "Bitmapa = null  NIEUDALO SIE")
-                                }
-
-                                brick.image = getBytesFromBitmap(bit)
-                                /*///---------ZAPIS DO PLIKU NA PROBE---------
-                                val fos : FileOutputStream  = openFileOutput("hihi", Context.MODE_PRIVATE);
-                                try {
-
-                                    bit.compress(Bitmap.CompressFormat.PNG, 100, fos);
-                                }
-                                catch (ex: Exception) {
-                                Log.e("---Exception", ex.toString())
-                                }
-                                fos.close()
-
+                                bit.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                             }catch (ex: Exception) {Log.e("---Exception", ex.toString())}
+                             fos.close()
                                 *////-------------------
-                            } catch (e: Exception) {Log.i("---","Blad ladowania URL") }
 
 
-                            /////////////
+
                             database.close()
                         }
                     }
@@ -187,8 +174,8 @@ class NewProjectActivity : AppCompatActivity() {
         return stream.toByteArray()
     }
 
-    private inner class XmlDownloader: AsyncTask<String, Int, String>(){
-
+    private inner class XmlDownloader (mycon:Context): AsyncTask<String, Int, String>(){
+        private var insideCon = mycon
         override fun doInBackground(vararg params: String?): String {
             try {
                 var filename = "downloadedXML.xml"
@@ -234,18 +221,17 @@ class NewProjectActivity : AppCompatActivity() {
             var projectName: String = projectNameEditText.text.toString()
             loadData(x,projectName)
 
-            ///
-            //////var intent = Intent(this, MainActivity::class.java )
-            //////intent.putExtra("code","1")
-            //////startActivity(intent)
-
-            ///
             return "success"
+        }
+
+        override fun onPostExecute(result: String?) {
+            val intent : Intent = Intent(insideCon, MainActivity::class.java)
+            startActivity(intent)
         }
     }
 
     fun downloadData(path:String){
-        val cd = XmlDownloader()
+        val cd = XmlDownloader(this)
         cd.execute(path)
     }
 
