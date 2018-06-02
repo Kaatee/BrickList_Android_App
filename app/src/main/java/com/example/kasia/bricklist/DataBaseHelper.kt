@@ -213,6 +213,13 @@ class DataBaseHelper
         return newID
     }
 
+    fun updateImage(x: InventoriesPart, image:ContentValues){
+        val db = writableDatabase
+        val query = "ColorID = " + x.colorID + " and ItemID = " + x.itemID_DB
+        db.update("CODES", image, query, null)
+        db.close()
+    }
+
     fun getImage(x: InventoriesPart): ByteArray?{
         val query = "SELECT Image FROM Codes WHERE Code = " +x.designID
         val db = this.writableDatabase
@@ -363,6 +370,8 @@ class DataBaseHelper
             inventoryPart.qty =inventoryPart.quantityInSet
             inventoryPart.color =getColor(inventoryPart.colorID!!)
             inventoryPart.name = getName(inventoryPart.itemID_DB!!)
+
+            inventoryPart.image = getImage(inventoryPart)
 
             inventoriesParts.add(inventoryPart)
         }

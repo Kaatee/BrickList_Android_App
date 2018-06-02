@@ -1,5 +1,6 @@
 package com.example.kasia.bricklist
 
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.os.AsyncTask
@@ -121,12 +122,14 @@ class NewProjectActivity : AppCompatActivity() {
                             brick.inventoryID =inventoryID
                             brick.alternate = "N"
                             brick.itemID_DB = database.getItemID_DB(brick)
+
                             try {
                                 brick.designID = database.getCode_DesignID(brick)
                             }catch(e:Exception){
                                 Log.i("---", "Blad newProject ladowania obrazka: "+e.message)
                             }
 
+/*
                             //handling image
                             //var url:String =  "https://www.lego.com/service/bricks/5/2/" + brick.designID
                             //if(!getImage(url, ))
@@ -134,6 +137,7 @@ class NewProjectActivity : AppCompatActivity() {
 
                             //https://www.lego.com/service/bricks/5/2/300126"
                             //var bit = BitmapFactory.decodeStream(URL("https://www.lego.com/service/bricks/5/2/"+brick.designID).content as InputStream)
+                            */
                             var bit = BitmapFactory.decodeStream(URL("https://www.lego.com/service/bricks/5/2/300126").content as InputStream)
 
                             if(bit!=null){
@@ -143,10 +147,16 @@ class NewProjectActivity : AppCompatActivity() {
                                 Log.i("---", "Bitmapa = null  NIEUDALO SIE")
                             }
 
+                            var img = getBytesFromBitmap(bit)
+                            val blobValues = ContentValues()
+                            blobValues.put("Image", img)
+                            Log.i("---","Design ID: "+brick.designID)
 
-
+                            if(brick.designID!! > 0)
+                                database.updateImage(brick, blobValues)
 
                             brick.image = getBytesFromBitmap(bit)
+
                             /*///---------ZAPIS DO PLIKU NA PROBE---------
                             val fos : FileOutputStream  = openFileOutput("hihi", Context.MODE_PRIVATE);
                             try {
