@@ -138,7 +138,12 @@ class NewProjectActivity : AppCompatActivity() {
                             //https://www.lego.com/service/bricks/5/2/300126"
                             //var bit = BitmapFactory.decodeStream(URL("https://www.lego.com/service/bricks/5/2/"+brick.designID).content as InputStream)
                             */
-                            var bit = BitmapFactory.decodeStream(URL("https://www.lego.com/service/bricks/5/2/300126").content as InputStream)
+                            var bit:Bitmap
+                            if(brick.designID!! > 0)
+                            bit = BitmapFactory.decodeStream(URL("https://www.lego.com/service/bricks/5/2/"+brick.designID).content as InputStream)
+                            else
+                            bit = BitmapFactory.decodeStream(URL("https://www.lego.com/service/bricks/5/2/300126").content as InputStream)
+
 
                             if(bit!=null){
                                 Log.i("---", "Bitmapa jest rozna od null UDALO SIE")

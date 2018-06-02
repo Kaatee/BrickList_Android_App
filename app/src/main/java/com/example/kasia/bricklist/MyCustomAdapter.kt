@@ -69,13 +69,9 @@ class MyCustomAdapter(private var activity: Activity, private var items: ArrayLi
 
         //handling image
         try {
-            Log.i("---","a")
             var xx: ByteArray = inventoryPart.image!!
-            Log.i("---","a2")
             var bitmap: Bitmap = ByteArrayToBitmap(xx)
-            Log.i("---","b")
             viewHolder.image?.setImageBitmap(bitmap)
-            Log.i("---","c")
         }catch(e:Exception){
             Log.i("---", "Blad obrazka: "+e.message)
         }
@@ -133,9 +129,7 @@ class MyCustomAdapter(private var activity: Activity, private var items: ArrayLi
 
 
     fun ByteArrayToBitmap(byteArray: ByteArray): Bitmap {
-        Log.i("---", "kasia")
         val arrayInputStream = ByteArrayInputStream(byteArray)
-        Log.i("---", "piciu")
         return BitmapFactory.decodeStream(arrayInputStream)
     }
 

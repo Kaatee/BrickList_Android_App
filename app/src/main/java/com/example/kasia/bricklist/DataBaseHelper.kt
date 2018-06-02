@@ -371,6 +371,7 @@ class DataBaseHelper
             inventoryPart.color =getColor(inventoryPart.colorID!!)
             inventoryPart.name = getName(inventoryPart.itemID_DB!!)
 
+            inventoryPart.designID = getCode_DesignID(inventoryPart)
             inventoryPart.image = getImage(inventoryPart)
 
             inventoriesParts.add(inventoryPart)
@@ -390,6 +391,10 @@ class DataBaseHelper
             inventoryPart.qty =inventoryPart.quantityInSet
             inventoryPart.color =getColor(inventoryPart.colorID!!)
             inventoryPart.name = getName(inventoryPart.itemID_DB!!)
+
+            inventoryPart.designID = getCode_DesignID(inventoryPart)
+            inventoryPart.image = getImage(inventoryPart)
+
             inventoriesParts.add(inventoryPart)
         }
         cursor.close()

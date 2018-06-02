@@ -29,6 +29,7 @@ class LegoSetActivity : AppCompatActivity() {
         adapter.notifyDataSetChanged()
 
 
+        //write brick which is not collected to XML file
         writeToXML.setOnClickListener{
             Log.i("---", " Nacisniety buttom wtiteToXML")
             val database = DataBaseHelper(this)
