@@ -1,5 +1,6 @@
 package com.example.kasia.bricklist
 
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -38,13 +39,13 @@ class LegoSetActivity : AppCompatActivity() {
             //Log.i("---", " Stworzona baza danych")
             var items: ArrayList<InventoriesPart> = database.getInventoriesParts(inventoryName)
             database.close()
-            Log.i("---", " TU JESTEM 1")
             var x = WriteToXML(items, this)
-            Log.i("---", " TU JESTEM 2")
             try {
                 x.writeXML(items)
             } catch(e:Exception){Log.i("---", "Blad: "+e.message )}
-            Log.i("---", " TU JESTEM 3")
+
+            val intent = Intent(this, MainActivity::class.java )
+            startActivity(intent)
         }
     }
 

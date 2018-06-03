@@ -36,18 +36,27 @@ class WriteToXML {
         for(inventoryPart in items) {
             if (inventoryPart.quantityInStore != inventoryPart.quantityInSet) {
                 val rootItem = doc.createElement("ITEM")
+
                 val itemType = doc.createElement("ITEMTYPE")
                 itemType.appendChild(doc.createTextNode(inventoryPart.itemType))
                 rootItem.appendChild(itemType)
+
                 val itemId = doc.createElement("ITEMID")
                 itemId.appendChild(doc.createTextNode(inventoryPart.itemId.toString()))
                 rootItem.appendChild(itemId)
+
                 val color = doc.createElement("COLOR")
                 color.appendChild(doc.createTextNode(inventoryPart.color.toString()))
                 rootItem.appendChild(color)
-                val qty = doc.createElement("QTYFILLED")
+
+                val qty = doc.createElement("QTY")
                 qty.appendChild(doc.createTextNode((inventoryPart.quantityInSet - inventoryPart.quantityInStore).toString()))
                 rootItem.appendChild(qty)
+
+                val extra = doc.createElement("EXTRA")
+                extra.appendChild(doc.createTextNode((inventoryPart.extra).toString()))
+                rootItem.appendChild(extra)
+
                 rootElement.appendChild(rootItem)
             }
         }
@@ -59,17 +68,50 @@ class WriteToXML {
         var path: File = Environment.getExternalStorageDirectory()
         val outDir = File(path, "BrickListFiles")
         outDir.mkdir()
-        Log.i("---","o")
 
-        //requestPermissions(, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),1)
-
-            val file = File(path.toString() + "/brickNeeded.xml")
-        Log.i("---","p")
-            transformer.transform(DOMSource(doc), StreamResult(file))
-        Log.i("---","r")
-            Toast.makeText(context,"Plik został zapisany na karte SD",Toast.LENGTH_SHORT).show()
+        val file = File(path.toString() + "/BrickListFiles/brickNeeded.xml")
+        transformer.transform(DOMSource(doc), StreamResult(file))
+        Toast.makeText(context,"Plik został zapisany na karte SD",Toast.LENGTH_SHORT).show()
 
     }
+/*
+fun export( v: View){
 
+
+        val docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+        val doc = docBuilder.newDocument()
+
+        val rootElement : Element= doc.createElement("person")
+
+        rootElement.setAttribute("person-id", "1001")
+
+        val lastName :Element = doc.createElement("last-name")
+
+        lastName.appendChild(doc.createTextNode("Doe"))
+        rootElement.appendChild(lastName)
+
+        val firstName : Element = doc.createElement("first-name")
+        firstName.appendChild(doc.createTextNode("John"))
+        rootElement.appendChild(firstName)
+        doc.appendChild(rootElement)
+
+
+        val tranformer : Transformer = TransformerFactory.newInstance().newTransformer()
+        tranformer.setOutputProperty(OutputKeys.INDENT,"yes")
+        tranformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount" , "2")
+        val path =this.filesDir
+        val outDir = File(path,"Output")
+        outDir.mkdir()
+
+        val file = File (outDir,"text.xml")
+
+        tranformer.transform(DOMSource(doc) , StreamResult(file))
+
+
+
+
+
+    }
+ */
 
 }
