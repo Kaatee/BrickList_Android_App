@@ -73,7 +73,7 @@ class MyCustomAdapter(private var activity: Activity, private var items: ArrayLi
             var bitmap: Bitmap = ByteArrayToBitmap(xx)
             viewHolder.image?.setImageBitmap(bitmap)
         }catch(e:Exception){
-            Log.i("---", "Blad obrazka: "+e.message)
+           // Log.i("---", "Blad obrazka: "+e.message)
         }
 
 

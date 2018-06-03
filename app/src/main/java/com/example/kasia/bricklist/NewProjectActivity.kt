@@ -1,5 +1,6 @@
 package com.example.kasia.bricklist
 
+import android.app.ProgressDialog
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
@@ -26,6 +27,9 @@ import android.graphics.BitmapFactory
 
 
 class NewProjectActivity : AppCompatActivity() {
+
+    var progress: ProgressDialog?=null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_project)
@@ -66,6 +70,8 @@ class NewProjectActivity : AppCompatActivity() {
             var itemID: String = itemIDEditText.text.toString()
             var projectName: String = projectNameEditText.text.toString()
             val filename = itemID+"__"+projectName+".xml"
+            progress = ProgressDialog.show(this, "Please wait",
+                    "downloading database", true);
             downloadData(path)
 
             Toast.makeText(this,"Projekt zostal utworzony",Toast.LENGTH_LONG).show()
@@ -139,38 +145,35 @@ class NewProjectActivity : AppCompatActivity() {
                             //var bit = BitmapFactory.decodeStream(URL("https://www.lego.com/service/bricks/5/2/"+brick.designID).content as InputStream)
                             */
                             var bit:Bitmap
-                            if(brick.designID!! > 0)
-                            bit = BitmapFactory.decodeStream(URL("https://www.lego.com/service/bricks/5/2/"+brick.designID).content as InputStream)
+                            if(brick.designID!! > 0) {
+                                try {
+                                    bit = BitmapFactory.decodeStream(URL("https://www.lego.com/service/bricks/5/2/" + brick.designID).content as InputStream)
+                                    //Log.i("---Bit: :" + bit.rowBytes, "---Bit: :" + bit.rowBytes)
+                                }catch(e:Exception){
+                                    try {
+                                        bit = BitmapFactory.decodeStream(URL("http://img.bricklink.com/P/" + brick.colorID + "/" + brick.itemID_DB + ".gif").content as InputStream)
+                                    } catch(ee:Exception){
+                                        try {
+                                            bit = BitmapFactory.decodeStream(URL("https://www.bricklink.com/PL/" + brick.itemID_DB + ".jpg").content as InputStream)
+                                        } catch(eee:Exception){
+                                            bit = BitmapFactory.decodeStream(URL("https://www.lego.com/service/bricks/5/2/300126").content as InputStream)
+                                            //Log.i("---","Wywalilem sie, nie mam obrazka")
+                                        }
+                                    }
+                                }
+                            }
                             else
                             bit = BitmapFactory.decodeStream(URL("https://www.lego.com/service/bricks/5/2/300126").content as InputStream)
-
-
-                            if(bit!=null){
-                                Log.i("---", "Bitmapa jest rozna od null UDALO SIE")
-                            }
-                            else{
-                                Log.i("---", "Bitmapa = null  NIEUDALO SIE")
-                            }
 
                             var img = getBytesFromBitmap(bit)
                             val blobValues = ContentValues()
                             blobValues.put("Image", img)
-                            Log.i("---","Design ID: "+brick.designID)
+                            //Log.i("---","Design ID: "+brick.designID)
 
                             if(brick.designID!! > 0)
                                 database.updateImage(brick, blobValues)
 
                             brick.image = getBytesFromBitmap(bit)
-
-                            /*///---------ZAPIS DO PLIKU NA PROBE---------
-                            val fos : FileOutputStream  = openFileOutput("hihi", Context.MODE_PRIVATE);
-                            try {
-                                bit.compress(Bitmap.CompressFormat.PNG, 100, fos);
-                             }catch (ex: Exception) {Log.e("---Exception", ex.toString())}
-                             fos.close()
-                                *////-------------------
-
-
 
                             database.close()
                         }
@@ -242,6 +245,7 @@ class NewProjectActivity : AppCompatActivity() {
         override fun onPostExecute(result: String?) {
             val intent : Intent = Intent(insideCon, MainActivity::class.java)
             startActivity(intent)
+            progress?.dismiss()
         }
     }
 
