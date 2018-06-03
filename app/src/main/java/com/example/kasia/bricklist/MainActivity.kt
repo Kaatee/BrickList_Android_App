@@ -58,10 +58,6 @@ class MainActivity : AppCompatActivity() {
             startActivityNewProject()
         }
 
-        archiveButton.setOnClickListener(){
-            ///TODO inventory name
-           /// writeXML(inventoryName)
-        }
     }
 
     public fun startActivityNewProject(){

@@ -11,6 +11,8 @@ import kotlinx.android.synthetic.main.activity_lego_set.*
 
 class LegoSetActivity : AppCompatActivity() {
     var inventoryName: String = ""
+    var inventoriesPart: ArrayList<InventoriesPart> = java.util.ArrayList()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,7 +23,7 @@ class LegoSetActivity : AppCompatActivity() {
         val database = DataBaseHelper(this)
 
         val listView: ListView = findViewById<ListView>(R.id.listView)
-        var inventoriesPart: ArrayList<InventoriesPart> = java.util.ArrayList()
+        //var inventoriesPart: ArrayList<InventoriesPart> = java.util.ArrayList()
         inventoriesPart = database.getInventoriesParts(inventoryName)
 
         var adapter = MyCustomAdapter(this, inventoriesPart, this)
@@ -33,11 +35,16 @@ class LegoSetActivity : AppCompatActivity() {
         writeToXML.setOnClickListener{
             Log.i("---", " Nacisniety buttom wtiteToXML")
             val database = DataBaseHelper(this)
-            Log.i("---", " Stworzona baza danych")
+            //Log.i("---", " Stworzona baza danych")
             var items: ArrayList<InventoriesPart> = database.getInventoriesParts(inventoryName)
             database.close()
-
-            WriteToXML(items, this)
+            Log.i("---", " TU JESTEM 1")
+            var x = WriteToXML(items, this)
+            Log.i("---", " TU JESTEM 2")
+            try {
+                x.writeXML(items)
+            } catch(e:Exception){Log.i("---", "Blad: "+e.message )}
+            Log.i("---", " TU JESTEM 3")
         }
     }
 

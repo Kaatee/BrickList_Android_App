@@ -71,7 +71,7 @@ class NewProjectActivity : AppCompatActivity() {
             var projectName: String = projectNameEditText.text.toString()
             val filename = itemID+"__"+projectName+".xml"
             progress = ProgressDialog.show(this, "Please wait",
-                    "downloading database", true);
+                    "downloading database", true)
             downloadData(path)
 
             Toast.makeText(this,"Projekt zostal utworzony",Toast.LENGTH_LONG).show()
@@ -91,7 +91,6 @@ class NewProjectActivity : AppCompatActivity() {
 
                 xmlDoc.documentElement.normalize()
 
-               //val database =MyDBHandler(this, null, null, 1)
                 val database = DataBaseHelper(this)
 
                 val inventory = Inventory(inventoryID, inventoryName,1, Date().time.toInt())
@@ -231,13 +230,18 @@ class NewProjectActivity : AppCompatActivity() {
                 return "IO Exception"
             }
 
-            var idT: String? = params[0]?.split("/")?.get(5)
-            var idT2: String? = idT?.split(".")?.get(0)
-            var x: Int = idT2!!.toInt()
+            //x -> project ID (here from URL)
+//            var idT: String? = params[0]?.split("/")?.get(5)
+//            var idT2: String? = idT?.split(".")?.get(0)
+//            var x: Int = idT2!!.toInt()
 
             val projectNameEditText: EditText = findViewById<EditText>(R.id.enterNameText)
             var projectName: String = projectNameEditText.text.toString()
-            loadData(x,projectName)
+
+            val projectIDEditText: EditText = findViewById<EditText>(R.id.enterItemIdText)
+            var projectID = Integer.parseInt(projectIDEditText.text.toString())
+
+            loadData(projectID, projectName)
 
             return "success"
         }
