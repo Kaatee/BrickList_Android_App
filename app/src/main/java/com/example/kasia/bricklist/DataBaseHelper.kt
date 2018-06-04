@@ -359,6 +359,19 @@ class DataBaseHelper
         return itemID
     }
 
+    fun getColorName(colorID: Int): String{
+        var colorName: String =""
+        val query = "Select Name FROM Colors WHERE id = " + colorID
+        val db = this.writableDatabase
+        val cursor = db.rawQuery(query, null)
+        if(cursor.moveToFirst()){
+            colorName = cursor.getString(0)
+        }
+        cursor.close()
+        db.close()
+        return colorName
+    }
+
     fun getInventoriesParts(inxentoryName: String):ArrayList<InventoriesPart>{
         val inventoriesParts : ArrayList<InventoriesPart> = java.util.ArrayList()
 
@@ -385,6 +398,7 @@ class DataBaseHelper
             inventoryPart.itemId = getItemID(inventoryPart.itemID_DB)
             inventoryPart.designID = getCode_DesignID(inventoryPart)
             inventoryPart.image = getImage(inventoryPart)
+            inventoryPart.colorName=getColorName(inventoryPart.colorID!!)
 
             inventoriesParts.add(inventoryPart)
         }
@@ -406,6 +420,7 @@ class DataBaseHelper
             inventoryPart.itemId = getItemID(inventoryPart.itemID_DB)
             inventoryPart.designID = getCode_DesignID(inventoryPart)
             inventoryPart.image = getImage(inventoryPart)
+            inventoryPart.colorName=getColorName(inventoryPart.colorID!!)
 
             inventoriesParts.add(inventoryPart)
         }

@@ -25,5 +25,5 @@ class InventoriesPart {
 
     var image: ByteArray? = null
     var designID: Int? =null
-
+    var colorName: String? = null
 }

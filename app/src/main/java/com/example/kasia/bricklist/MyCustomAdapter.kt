@@ -57,11 +57,11 @@ class MyCustomAdapter(private var activity: Activity, private var items: ArrayLi
 
         var inventoryPart = items[position]
         if(inventoryPart.name!!.length>0)
-            viewHolder.txtName?.text = inventoryPart.name
+            viewHolder.txtName?.text = inventoryPart.name + ", color: "+ inventoryPart.colorName
         else if(viewHolder.txtName?.text!!.length>0)
-            viewHolder.txtName?.text = inventoryPart.itemId
+            viewHolder.txtName?.text = inventoryPart.itemId + ", color: "+ inventoryPart.colorName
         else
-            viewHolder.txtName?.text = inventoryPart.itemType
+            viewHolder.txtName?.text = inventoryPart.itemType + ", color: "+ inventoryPart.colorName
 
 
         viewHolder.available?.text = inventoryPart.quantityInStore.toString()
